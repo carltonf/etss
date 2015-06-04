@@ -1,0 +1,2 @@
+Emacs TypeScript Servcie library: a midde-level library between TypeScript
+Services and Emacs.
