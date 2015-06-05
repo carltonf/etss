@@ -130,3 +130,5 @@ Otherwise return nil. To guarantee getting results, the client
 code can do the busy polling."
   (tss--active-test)
   (error "Not implemented."))
+
+(provide 'tss)

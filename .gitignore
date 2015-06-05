@@ -1,0 +1,12 @@
+*.elc
+*.pyc
+*.info
+
+# Packages installed for development
+/.cask/
+
+# Generated distribution packages
+/dist/
+
+# Directory local variables
+.dir-locals.el
