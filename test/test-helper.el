@@ -4,11 +4,12 @@
 ;;; NOTE the CWD set by `cask' is where CASK file located
 (add-to-list 'load-path (expand-file-name "src"))
 
-(defun* tss-file/mocker ()
+(defun* tss-file/mocker (&key name)
   "Mock a `tss-file' object for testing."
   (let* ((buffer (find-file-noselect "mockdata/single-file.ts"))
          (client (make-instance tss-file/class
-                                :buffer buffer)))
+                                :buffer buffer
+                                :name (or name ""))))
     client))
 
 (defun* tss-manager/client-list-mocker ()

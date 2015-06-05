@@ -15,7 +15,6 @@ before checks for other types of clients."
   t)
 
 ;;;: Object Methods
-;;;#+NO-TEST
 (defmethod tss-client/initialize ((this tss-file/class))
   (with-slots (name buffer initp) this
     (unless (s-present? name)
