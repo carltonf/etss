@@ -1,6 +1,6 @@
 ;;; Tests for `tss-project', prefix `tss-project--' is omitted.
 
-(require 'ert)
+(require 'tss-project)
 
 (ert-deftest contains? ()
   (with-temp-buffer

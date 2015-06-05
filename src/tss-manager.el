@@ -15,6 +15,7 @@
 (require 'tss-project)
 
 (require 'tss-comm)
+(require 'tss-tst)
 
 (defvar tss-manager/client-list ()
   "A global list of all `tss-client'.")
@@ -87,6 +88,5 @@ conducted following a chain:
        (with-current-buffer buffer
          (and tss--client
               (tss-client/active? tss--client)))))
-
 
 (provide 'tss-manager)

@@ -1,6 +1,4 @@
-(require 'ert)
-
-(load-file "helper.el")
+(require 'tss-manager)
 
 (ert-deftest client-loaded? ()
   (let ((tss-manager/client-list (tss-manager/client-list-mocker)))

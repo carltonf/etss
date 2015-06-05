@@ -1,4 +1,6 @@
 ;;; TSS Communication: code that talks with TSS
+(require 'tss-client)
+(require 'eieio)
 
 (defclass tss-comm/class ()
   ((client :type tss-client/class
@@ -89,3 +91,5 @@ See `tss-client/get-doc' for more details.")
 
 (defgeneric tss-comm/get-errors ((this tss-comm/class))
   "Retrieve errors.")
+
+(provide 'tss-comm)

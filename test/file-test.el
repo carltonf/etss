@@ -1,4 +1,4 @@
-(require 'ert)
+(require 'tss-file)
 
 (ert-deftest contains? ()
   (let ((client (tss-file/mocker)))

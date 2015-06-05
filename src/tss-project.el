@@ -8,6 +8,8 @@
 ;;; - [ ] Integrated with `projectile', which is a popular package supports a lot project-wide
 ;;; facilities.
 
+(require 'tss-client)
+
 ; (fmakunbound 'tss-project/class)
 (defclass tss-project/class (tss-client/class)
   ((type :type symbol
@@ -162,3 +164,5 @@ ROOT-SOURCES can be relative to PRJROOT, which itself needs to be
                                 collect (expand-file-name path prjroot))))
            tss--project-root-sources-table)
   name)
+
+(provide 'tss-project)

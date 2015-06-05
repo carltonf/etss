@@ -12,3 +12,5 @@ value after all KEYS found, or nil if some keys are not found."
         do (setq alist (cdr nalist))
         else do (setq alist nil))
   alist)
+
+(provide 'tss-utils)

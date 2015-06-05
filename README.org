@@ -4,3 +4,14 @@ Services and Emacs.
 This project grows out of [[https://github.com/carltonf/emacs-tss][my fork]] of [[https://github.com/aki2o/emacs-tss][aki2o/emacs-tss]], completely rewritten with
 a focus on re-usability. Many Emacs utilities are factored out as independent
 projects basing on =etss=.
+
+* Test
+Tests are written with built-in =ert= library, [[https://github.com/rejeep/ert-runner.el][rejeep/ert-runner.el]] is used to
+ease running tests.
+
+If you want to run the tests:
+: cask exec ert-runner
+or
+: cask exec ert-runner <specific-test-path>
+
+There are more options available at [[https://github.com/rejeep/ert-runner.el][rejeep/ert-runner.el]].

@@ -1,4 +1,4 @@
-(require 'ert)
+(require 'tss-utils)
 
 (ert-deftest assoc-path ()
   (let ((alist '((foo . ((bar . "llama")

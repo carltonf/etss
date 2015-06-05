@@ -1,4 +1,6 @@
 ;;; TS Communication for "clausreinke/typescript-tools"
+(require 'tss-comm)
+(require 'json-mode)
 
 (defclass tss-tst/class (tss-comm/class)
   ((proc :type process
@@ -145,8 +147,7 @@ other unify outputs in standard JSON format."
                                            (+ space))) ;Note: quoted string within.
           for line in (split-string (or rawres "") "[\r\n]+")
           if (s-equals? line "null")
-          return (progn (message "TSS: Got null response")
-                        (setq response 'null))
+          return (setq response 'null)
           ;; normal JSON style response
           if (and (s-present? line)
                   (or
@@ -155,18 +156,15 @@ other unify outputs in standard JSON format."
                    ;; start to get response
                    (and (s-present? response-start-tag)
                         (s-prefix? response-start-tag line))))
-          return (progn (tss--debug "Got json response : %s" line)
-                        (setq incomplete-response (concat incomplete-response line))
+          return (progn (setq incomplete-response (concat incomplete-response line))
                         (when (tss-tst/response-balanced? incomplete-response
                                                           response-start-tag
                                                           response-end-tag)
-                          (tss--trace "Finished getting json response")
                           (setq response (json-read-from-string incomplete-response)
                                 incomplete-response "")))
           ;; special output: a line of string with special format
           if (string-match endre line)
-          return (progn (tss--debug "Got other response : %s" line)
-                        (setq response 'succeed))
+          return (setq response 'succeed)
           ;; error for server
           if (string-match "\\`\"TSS +\\(.+\\)\"\\'" line)
           do (tss-tst/handle-err-response this line rawres))))

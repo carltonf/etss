@@ -1,3 +1,9 @@
+(eval-when-compile
+  (require 'cl))
+
+;;; NOTE the CWD set by `cask' is where CASK file located
+(add-to-list 'load-path (expand-file-name "src"))
+
 (defun* tss-file/mocker ()
   "Mock a `tss-file' object for testing."
   (let* ((buffer (find-file-noselect "mockdata/single-file.ts"))

@@ -1,3 +1,7 @@
+(require 'tss-tst)
+(require 'tss-file)
+(require 'tss-project)
+
 (ert-deftest response-balanced? ()
   (let ((str "some") stag etag)
     (should (tss-tst/response-balanced? str stag etag)))
@@ -62,17 +66,15 @@
                           (oref tst response)))
            (should (equal "" (oref tst incomplete-response))))))
 
-(load-file "helper.el")
-
-(ert-deftest get-cmdstr ()
+(ert-deftest get-start-cmdstr ()
   (let* ((client (tss-file/mocker))
          (tst (make-instance tss-tst/class :client client)))
     (should (string-match-p "^[^ \t]+tss [^ \t]+mockdata.single-file\\.ts$"
-                            (tss-tst/get-cmdstr tst))))
+                            (tss-tst/get-start-cmdstr tst))))
   (let* ((client (make-instance tss-project/class))
          (tst (make-instance tss-tst/class :client client)))
     (should (string-match-p "^[^ \t]+tss$" 
-                            (tss-tst/get-cmdstr tst)))))
+                            (tss-tst/get-start-cmdstr tst)))))
 
 (ert-deftest get-posarg ()
   (with-temp-buffer
