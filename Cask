@@ -6,7 +6,6 @@
 
 (files "src/*")
 
-(depends-on "json-mode" "1.1.0")
 (depends-on "f")
 (depends-on "s")
 (depends-on "dash")

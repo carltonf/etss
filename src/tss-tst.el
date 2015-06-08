@@ -1,6 +1,9 @@
 ;;; TS Communication for "clausreinke/typescript-tools"
+(require 'json)
+
 (require 'tss-comm)
-(require 'json-mode)
+
+(require 's)
 
 (defclass tss-tst/class (tss-comm/class)
   ((proc :type process
@@ -159,12 +162,11 @@ other unify outputs in standard JSON format."
                    ;; start to get response
                    (and (s-present? response-start-tag)
                         (s-prefix? response-start-tag line))))
-          return (progn (setq incomplete-response (concat incomplete-response line))
-                        (when (tss-tst/response-balanced? incomplete-response
-                                                          response-start-tag
-                                                          response-end-tag)
-                          (setq response (json-read-from-string incomplete-response)
-                                incomplete-response "")))
+          return (progn
+                   (setq incomplete-response (s-concat incomplete-response line)
+                         response (tss-tst/parse-response incomplete-response))
+                   (when response
+                     (setq incomplete-response "")))
           ;; special output: a line of string with special format
           if (string-match endre line)
           return (setq response 'succeed)
@@ -360,27 +362,13 @@ and etc."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;: Static functions
 
-(defun tss-tst/response-balanced? (str stag etag)
-  "Check whether STR is balanced with STAG as start tag, ETAG as end tag."
-  (cond
-   ;; no tags means always balanced
-   ((or (s-blank? stag)
-        (s-blank? etag))
-    t)
-   ;; normal case
-   ((and (s-prefix? stag str)
-         (s-suffix? etag str))
-    ;; TODO the following use of `json-mode' feels bad... possible alts:
-    ;; jsonlint, `flymake-json' and etc, maybe even the built in
-    ;; `json-readtable'?
-    (with-temp-buffer
-      (insert str)
-      (json-mode)
-      (goto-char (point-max))
-      (ignore-errors (backward-list))
-      (= (point) (point-min))))
-   ;; other situations?
-   (t nil)))
+(defun tss-tst/parse-response (str)
+  "Parse STR. If it is complete and well-formated, return parsed
+result otherwise nil.
+
+This is NOT validation."
+  (ignore-errors
+    (json-read-from-string str)))
 
 (defun tss-tst/get-posarg (buffer)
   "Get position argument in the format '<line-num> <col-num>'.
