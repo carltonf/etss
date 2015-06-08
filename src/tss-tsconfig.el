@@ -11,11 +11,11 @@
 
 (require 'tss-client)
 
-(defconst tss-project/tsconfig-filename "tsconfig.json"
+(defconst tss-tsconfig/tsconfig-filename "tsconfig.json"
   "TS project configuration file, see
 https://github.com/Microsoft/TypeScript/wiki/tsconfig.json")
 
-(defclass tss-project/class (tss-client/class)
+(defclass tss-tsconfig/class (tss-client/class)
   ((type :type symbol
          :initform 'tsconfig)
    (root :type string
@@ -28,21 +28,21 @@ https://github.com/Microsoft/TypeScript/wiki/tsconfig.json")
             belonging to this client."))
   :documentation "TSS client class for tsconfig project.")
 
-(defun tss-project/locate-project-root (fpath)
+(defun tss-tsconfig/locate-project-root (fpath)
   "Try to locate a the project root for FPATH. This function
 searches upwards to find the nearest ancestor containing
-`tss-project/tsconfig-filename'."
-  (locate-dominating-file fpath tss-project/tsconfig-filename))
+`tss-tsconfig/tsconfig-filename'."
+  (locate-dominating-file fpath tss-tsconfig/tsconfig-filename))
 
-(defmethod tss-client/applicable? :static ((class tss-project/class) file-buf)
+(defmethod tss-client/applicable? :static ((class tss-tsconfig/class) file-buf)
   "Check whether a FILE-BUF belongs to a
-  `tss-project/tsconfig-filename' project."
-  (tss-project/locate-project-root (buffer-file-name file-buf)))
+  `tss-tsconfig/tsconfig-filename' project."
+  (tss-tsconfig/locate-project-root (buffer-file-name file-buf)))
 
-(defmethod tss-client/initialize ((this tss-project/class))
+(defmethod tss-client/initialize ((this tss-tsconfig/class))
   (with-slots (name buffer buflist root initp) this
     (let ((fpath (buffer-file-name buffer)))
-      (setq root (tss-project/locate-project-root fpath))
+      (setq root (tss-tsconfig/locate-project-root fpath))
       (unless (s-present? name)
         (setq name (f-filename root)))
       (add-to-list 'buflist buffer))
@@ -50,17 +50,17 @@ searches upwards to find the nearest ancestor containing
     (setq initp t)))
 
 ;;;NO-TEST
-(defmethod tss-client/contains? ((this tss-project/class) file-buf)
+(defmethod tss-client/contains? ((this tss-tsconfig/class) file-buf)
   "Whether FILE-BUF belongs to THIS project."
   (let ((fpath (buffer-file-name file-buf)))
     (with-slots (root) this
-      (tss-project/path-within-root? root fpath))))
+      (tss-tsconfig/path-within-root? root fpath))))
 
-(defun tss-project/path-within-root? (root fpath)
+(defun tss-tsconfig/path-within-root? (root fpath)
   "Pure function to test whether FPATH is under ROOT."
   (s-prefix? root fpath))
 
-(defmethod tss-client/destory ((this tss-project/class))
+(defmethod tss-client/destory ((this tss-tsconfig/class))
   (with-slots (comm buflist initp) this
     (setq initp nil)
     (tss-comm/destroy comm)
@@ -68,4 +68,4 @@ searches upwards to find the nearest ancestor containing
           do (with-current-buffer buf
                (setq tss--client nil)))))
 
-(provide 'tss-project)
+(provide 'tss-tsconfig)

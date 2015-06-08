@@ -1,6 +1,6 @@
 (require 'tss-tst)
 (require 'tss-file)
-(require 'tss-project)
+(require 'tss-tsconfig)
 
 (ert-deftest response-balanced? ()
   (let ((str "some") stag etag)
@@ -71,7 +71,7 @@
          (tst (make-instance tss-tst/class :client client)))
     (should (string-match-p "^[^ \t]+tss [^ \t]+mockdata.single-file\\.ts$"
                             (tss-tst/get-start-cmdstr tst))))
-  (let* ((client (make-instance tss-project/class))
+  (let* ((client (make-instance tss-tsconfig/class))
          (tst (make-instance tss-tst/class :client client)))
     (should (string-match-p "^[^ \t]+tss$" 
                             (tss-tst/get-start-cmdstr tst)))))

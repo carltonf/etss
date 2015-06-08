@@ -15,7 +15,7 @@
 
 (require 'tss-client)
 (require 'tss-file)
-(require 'tss-project)
+(require 'tss-tsconfig)
 
 (require 'tss-tst)
 (require 'tss-comm)

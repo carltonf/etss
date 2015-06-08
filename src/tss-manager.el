@@ -12,7 +12,7 @@
 
 (require 'tss-client)
 (require 'tss-file)
-(require 'tss-project)
+(require 'tss-tsconfig)
 
 (require 'tss-comm)
 (require 'tss-tst)
@@ -35,7 +35,7 @@ communications."
         (warn "TSS: some client-specific cleaning up has failed."))
       (setq tss-manager/client-list nil))))
 
-(defvar tss-manager/registered-client-classes '(tss-project/class
+(defvar tss-manager/registered-client-classes '(tss-tsconfig/class
                                                 tss-file/class)
   "A list of registered client class. The order of different
 clients are predefined as it affects the type of client will be
