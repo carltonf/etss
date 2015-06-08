@@ -1,9 +1,10 @@
 ;;; TS Communication for "clausreinke/typescript-tools"
 (require 'json)
 
-(require 'tss-comm)
-
 (require 's)
+(require 'dash)
+
+(require 'tss-comm)
 
 (defclass tss-tst/class (tss-comm/class)
   ((proc :type process
@@ -11,19 +12,7 @@
          :documentation "Process of tss.")
    (incomplete-response :type string
                         :initform ""
-                        :documentation "Incomplete/intermediate TSS response, raw JSON string.")
-   ;; WARNING: TSS response is NOT JSON actually, it's more like JavaScript data
-   ;; get inspected. For now, there are string, array and object. So here we
-   ;; need to set the start&end char to know what responses we are receiving.
-   ;;
-   ;; TODO we get rid of these members as each command has predefined separators
-   ;; or using the first char [ or { we can dynamically decide what to use.
-   (response-start-tag :type string
-                       :initform ""
-                       :documentation "Indicate the start of the response.")
-   (response-end-tag :type string
-                     :initform ""
-                     :documentation "Indicate the end of the response."))
+                        :documentation "Incomplete/intermediate TSS response, raw JSON string."))
   :allow-nil-initform t
   :documentation
   "TS service class for \"clausreinke/typescript-tools\".")
@@ -54,8 +43,7 @@
         (process-connection-type nil)
         (waiti 0))
     ;; prepare process
-    (with-slots (client status proc response incomplete-response
-                 response-start-tag response-end-tag) this
+    (with-slots (client status proc response incomplete-response) this
       (setq client-name (oref client name)
             procnm (format "tss-%s" client-name)
             cmdstr (tss-tst/get-start-cmdstr this))
@@ -67,9 +55,7 @@
         ;; `tss-tst/receive-response-filter'.
         (process-put proc 'comm this)
         (setq response nil
-              incomplete-response ""
-              response-start-tag ""
-              response-end-tag "")
+              incomplete-response "")
         (set-process-query-on-exit-flag proc nil)
         (set-process-filter proc #'tss-tst/receive-response-filter)
         (set-process-sentinel proc #'tss-tst/proc-sentinel)
@@ -146,9 +132,7 @@ idle and it's possible to only receive partial result.
 TSS for now has informal/various output format. TSServer on the
 other unify outputs in standard JSON format."
   (with-slots (response
-               incomplete-response
-               response-start-tag
-               response-end-tag) this
+               incomplete-response) this
     (loop with endre = (rx-to-string `(and bol "\"" (or "loaded" "updated" "added")
                                            (+ space))) ;Note: quoted string within.
           for line in (split-string (or rawres "") "[\r\n]+")
@@ -159,9 +143,12 @@ other unify outputs in standard JSON format."
                   (or
                    ;; in the middle of receiving response
                    (s-present? incomplete-response)
-                   ;; start to get response
-                   (and (s-present? response-start-tag)
-                        (s-prefix? response-start-tag line))))
+                   ;;: start to get response
+                   ;; WARNING: TSS response is NOT JSON actually, it's more like
+                   ;; JavaScript data get inspected. For now, there are string,
+                   ;; array and object. So here we need to set the start&end
+                   ;; char to know what responses we are receiving.
+                   (-some? (lambda (btag) (s-prefix? btag line)) '("{" "["))))
           return (progn
                    (setq incomplete-response (s-concat incomplete-response line)
                          response (tss-tst/parse-response incomplete-response))
@@ -213,10 +200,7 @@ typescript-tools.
 
 COMM-CMDS is a list, whose car should be one of
 `tss-tst/supported-cmds'."
-  (with-slots (response-start-tag
-               response-end-tag
-               response
-               client) this
+  (with-slots (response client) this
     (let* ((cbuf (oref client buffer))
            (cmd (car comm-cmds))
            cmdstr
@@ -236,18 +220,17 @@ COMM-CMDS is a list, whose car should be one of
          (message "reload currently doesn't respond any meaningful response back."))
         (_
          (error "%s NOT supported yet ;P" cmd)))
-      ;; different commands have different delimiters
-      ;; TODO feels cumbersome. An adaptive receiver?
-      (pcase cmd
-        ((or "quickInfo" "definition" "completions" "completions-brief")
-         (setq response-start-tag "{"
-               response-end-tag "}"))
-        ((or "references" "navigationBarItems" "navigateToItems" "files" "showErrors")
-         (setq response-start-tag "["
-               response-end-tag "]"))
-        (_
-         (setq response-start-tag ""
-               response-end-tag "")))
+      ;;: manual delimiters setup is not used, kept before we document things well.
+      ;; (pcase cmd
+      ;;   ((or "quickInfo" "definition" "completions" "completions-brief")
+      ;;    (setq response-start-tag "{"
+      ;;          response-end-tag "}"))
+      ;;   ((or "references" "navigationBarItems" "navigateToItems" "files" "showErrors")
+      ;;    (setq response-start-tag "["
+      ;;          response-end-tag "]"))
+      ;;   (_
+      ;;    (setq response-start-tag ""
+      ;;          response-end-tag "")))
 
       (tss-tst/send-accept this cmdstr)
       response)))
@@ -314,11 +297,7 @@ and etc."
   (let ((cmdstr (format "update %d %s" linecount path)))
     ;; update doesn't output, don't accept
     (tss-tst/send-msg this cmdstr)
-    (with-slots (response-start-tag
-                 response-end-tag) this
-      (setq response-start-tag ""
-            response-end-tag ""))
-
+    ;; sync source
     (tss-tst/send-accept this source)
     (unless (eq (oref this response) 'succeed)
       (warn "TSS: Fail to update source for '%s'." path))))
@@ -329,11 +308,7 @@ and etc."
   ;; in 'tst', "completions" command return a lot extra details
   (let ((cmdstr (format "completions-brief %d %d %s"
                         line (1+ column) fpath)))
-    (with-slots (response-start-tag
-                 response-end-tag
-                 response) this
-      (setq response-start-tag "{"
-            response-end-tag "}")
+    (with-slots (response) this
       (tss-tst/send-accept this cmdstr)
       ;; for completions, `null' means no completions and thus should be nil.
       (when (eq response 'null)
@@ -345,19 +320,11 @@ and etc."
                              line column fpath)
   (let ((cmdstr (format "quickInfo %d %d %s"
                         line (1+ column) fpath)))
-    (with-slots (response-start-tag
-                 response-end-tag) this
-      (setq response-start-tag "{"
-            response-end-tag "}")
-      (tss-tst/send-accept this cmdstr))))
+    (tss-tst/send-accept this cmdstr)))
 
 (defmethod tss-comm/get-errors ((this tss-tst/class))
-  (let ((cmdstr (format "showErrors")))
-    (with-slots (response-start-tag
-                 response-end-tag) this
-      (setq response-start-tag "["
-            response-end-tag "]")
-      (tss-tst/send-accept this cmdstr))))
+  (let ((cmdstr "showErrors"))
+    (tss-tst/send-accept this cmdstr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;: Static functions
