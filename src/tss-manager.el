@@ -25,9 +25,15 @@
   "Helper command to remove all clients, delete all
 communications."
   (interactive)
-  (loop for client in tss-manager/client-list
-        do (tss-client/destory client))
-  (setq tss-manager/client-list nil))
+  (let (success-p)
+    (unwind-protect
+        (progn
+          (loop for client in tss-manager/client-list
+                do (tss-client/destory client))
+          (setq success-p t))
+      (unless success-p
+        (warn "TSS: some client-specific cleaning up has failed."))
+      (setq tss-manager/client-list nil))))
 
 (defvar tss-manager/registered-client-classes '(tss-project/class
                                                 tss-file/class)

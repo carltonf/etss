@@ -16,3 +16,9 @@
   "Mock a `tss-manager/client-list', use `let' binding to use."
   (let ((clist (list (tss-file/mocker))))
     clist))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; For `tsconfig' project
+(defmacro with-tsconfig-prj-root (subpath)
+  "Return a complete path to SUBPATH under tsconfig project mockdata."
+  `(f-join "test/mockdata/tsconfig-prj" ,subpath))

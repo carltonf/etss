@@ -12,6 +12,9 @@
    ;; WARNING: TSS response is NOT JSON actually, it's more like JavaScript data
    ;; get inspected. For now, there are string, array and object. So here we
    ;; need to set the start&end char to know what responses we are receiving.
+   ;;
+   ;; TODO we get rid of these members as each command has predefined separators
+   ;; or using the first char [ or { we can dynamically decide what to use.
    (response-start-tag :type string
                        :initform ""
                        :documentation "Indicate the start of the response.")

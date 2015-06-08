@@ -38,13 +38,6 @@ before checks for other types of clients."
              (tss-comm/alive? comm)))))
 
 ;;;#NO-TEST
-(defmethod tss-client/connect ((this tss-file/class) service)
-  "A new instance of TSS service always starts for `tss-file/class'"
-  (with-slots (comm) this
-    (setq comm service)
-    (tss-comm/start comm)))
-
-;;;#NO-TEST
 (defmethod tss-client/destory ((this tss-file/class))
   (with-slots (comm buffer initp) this
     (setq initp nil)

@@ -11,6 +11,17 @@
 ;;; Naming Convention:
 ;;; 1. "tss-" prefix for interactive command or customization options.
 ;;; 2. "tss--" prefix for ELisp programming API and variables.
+(require 'tss-manager)
+
+(require 'tss-client)
+(require 'tss-file)
+(require 'tss-project)
+
+(require 'tss-tst)
+(require 'tss-comm)
+
+(require 'tss-utils)
+
 
 (defvar-local tss--client nil
   "Reference to the `tss-client/class' for current buffer.")

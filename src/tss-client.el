@@ -59,8 +59,11 @@ before any use of the objects.")
 (defgeneric tss-client/contains? ((this tss-client/class) file-buf)
   "Check whether THIS client contains FILE-BUF.")
 
-(defgeneric tss-client/connect ((this tss-client/class) file-buf)
-  "Connect to TSS.")
+(defmethod tss-client/connect ((this tss-client/class) service)
+  "Connect to TSS."
+  (with-slots (comm) this
+    (setq comm service)
+    (tss-comm/start comm)))
 
 (defgeneric tss-client/active? ((this tss-client/class))
   "Check whether THIS client is still active. If not, usually a

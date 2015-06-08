@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "outDir": "js",
+        "sourceMap": true
+    },
+    "files": [
+        "./ts/animals.ts"
+    ]
+}
