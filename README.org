@@ -5,9 +5,37 @@ This project grows out of [[https://github.com/carltonf/emacs-tss][my fork]] of 
 a focus on re-usability. Many Emacs utilities are factored out as independent
 projects basing on =etss=.
 
+* Support
+As a middleware, the architecture of =etss= tries to be as flexible as possible
+such that it's easy to add support for different types of projects or TypeScript
+language services.
+
+** Project
+Single source file is naturally supported.
+*** With =tsconfig.json=
+
+The official configuration file see [[https://github.com/Microsoft/TypeScript/wiki/tsconfig.json][wiki/tsconfig.json]]. It's newly added since TS =1.5.0-alpha=.
+
+Currently this configuration has many limitations and it's constantly evolving.
+Not many projects actually use this neither.
+
+*** TODO =etss=-specific configuration file
+This is planned as it offers a native way to exploit all features of =tsc=.
+
+*** TODO =gulp=-related project support
+A more practical and common setup of TS projects.
+
+However as =gulp= setup tends to be quite flexible, I am not very clear about
+what to expect, possibly a =tss-emacs= =gulp= plugin is needed.
+
+** Language Service
+So far only [[https://github.com/clausreinke/typescript-tools][clausreinke/typescript-tools]] is supported. Support for the official
+=tsserver= is planned.
+
+
 * Test
 Tests are written with built-in =ert= library, [[https://github.com/rejeep/ert-runner.el][rejeep/ert-runner.el]] is used to
-ease running tests.
+ease test running.
 
 If you want to run the tests:
 : cask exec ert-runner
