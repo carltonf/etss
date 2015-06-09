@@ -38,7 +38,7 @@ Tests are written with built-in =ert= library, [[https://github.com/rejeep/ert-r
 ease test running.
 
 If you want to run the tests:
-: cask exec ert-runner
+: make test
 or
 : cask exec ert-runner <specific-test-path>
 
