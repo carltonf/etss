@@ -1,5 +1,6 @@
 ;;; ETSS Communication: code that talks with TS language Service
-(require 'etss-client)
+(eval-when-compile
+  (require 'cl))
 (require 'eieio)
 
 (defclass etss-comm/class ()

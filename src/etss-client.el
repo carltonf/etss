@@ -10,7 +10,13 @@
 ;;;   called to clean up.
 ;;; - Upon fatal errors or user request, `etss-manager' can destroy a client.
 
+(eval-when-compile
+  (require 'cl))
 (require 'eieio)
+
+(require 'etss-comm)
+
+(defvar etss--client)
 
 (defclass etss-client/class ()
   ((name :initarg :name

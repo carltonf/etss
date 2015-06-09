@@ -1,10 +1,15 @@
 ;;; TS Communication for "clausreinke/typescript-tools"
+(eval-when-compile
+  (require 'cl))
 (require 'json)
+(require 'pp)
 
 (require 's)
 (require 'dash)
 
 (require 'etss-comm)
+
+(defvar etss--client)
 
 (defclass etss-tst/class (etss-comm/class)
   ((proc :type process

@@ -2,14 +2,13 @@
 (source melpa)
 
 
-(package "etss" "0.0.1" "ETSS")
+(package "etss" "0.0.1" "Emacs TypeScript language Service")
 
-(files "src/*")
+(files "src/*.el")
 
-(depends-on "f")
-(depends-on "s")
-(depends-on "dash")
-
+(depends-on "f" "0.16.0")
+(depends-on "s" "1.8.0")
+(depends-on "dash" "2.2.0")
 
 (development
  (depends-on "ert-runner"))

@@ -1,6 +1,10 @@
 ;;; ETSS for a single source file
+(eval-when-compile
+  (require 'cl))
 
 (require 'etss-client)
+
+(defvar etss--client)
 
 (defclass etss-file/class (etss-client/class)
   ((type :type symbol

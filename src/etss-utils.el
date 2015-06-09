@@ -1,5 +1,8 @@
 ;;; Various utility&helper functions
 
+(eval-when-compile
+  (require 'cl))
+
 (defun etss-utils/assoc-path (alist keys)
   "ALIST is a nested associate list, KEYS are a list of of keys or a single key.
 Search KEYS in ALIST in a similar manner like XPATH. Return the

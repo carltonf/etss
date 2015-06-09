@@ -8,6 +8,8 @@
 ;;; - Manage all existing clients and their life cycle, see `etss-client' for detail.
 ;;; - Identify&Create the right client type of new buffer.
 ;;; - Responsible for starting/stopping ETSS service.
+(eval-when-compile
+  (require 'cl))
 
 (require 'etss-client)
 (require 'etss-file)
@@ -17,6 +19,8 @@
 (require 'etss-tst)
 
 (require 'etss-utils)
+
+(defvar etss--client)
 
 (defvar etss-manager/client-list ()
   "A global list of all `etss-client'.")

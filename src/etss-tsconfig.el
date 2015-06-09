@@ -5,8 +5,12 @@
 ;;; TODO
 ;;; - [ ] Integrated with `projectile', which is a popular package supports
 ;;;   a lot project-wide facilities.
+(eval-when-compile
+  (require 'cl))
 
 (require 'etss-client)
+
+(defvar etss--client)
 
 (defconst etss-tsconfig/tsconfig-filename "tsconfig.json"
   "TS project configuration file, see

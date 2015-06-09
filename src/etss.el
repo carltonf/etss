@@ -11,6 +11,9 @@
 ;;; Naming Convention:
 ;;; 1. "etss-" prefix for interactive command or customization options.
 ;;; 2. "etss--" prefix for ELisp programming API and variables.
+(eval-when-compile
+  (require 'cl))
+
 (require 'etss-manager)
 
 (defvar-local etss--client nil
