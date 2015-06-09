@@ -1,6 +1,6 @@
 (source gnu)
 (source melpa)
-;; (source marmalade)
+
 
 (package "etss" "0.0.1" "ETSS")
 

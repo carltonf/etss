@@ -1,53 +1,43 @@
-;;; Main file of "tss" library
+;;; Main file of "etss" library
 ;;;
-;;; TSS is TypeScript Service for Emacs.
+;;; ETSS is TypeScript language Service for Emacs.
 ;;;
 ;;; It strives to serve as a middle layer between various typescript projects
 ;;; and typescript language service. TSS defines a common set of API that make
 ;;; 3rd party ELisp packages easily understand ts projects and source code.
 ;;;
-;;; TSS-IDE is the companion utility package
+;;; ETSS-IDE is the companion utility package
 ;;;
 ;;; Naming Convention:
-;;; 1. "tss-" prefix for interactive command or customization options.
-;;; 2. "tss--" prefix for ELisp programming API and variables.
-(require 'tss-manager)
+;;; 1. "etss-" prefix for interactive command or customization options.
+;;; 2. "etss--" prefix for ELisp programming API and variables.
+(require 'etss-manager)
 
-(require 'tss-client)
-(require 'tss-file)
-(require 'tss-tsconfig)
+(defvar-local etss--client nil
+  "Reference to the `etss-client/class' for current buffer.")
 
-(require 'tss-tst)
-(require 'tss-comm)
-
-(require 'tss-utils)
-
-
-(defvar-local tss--client nil
-  "Reference to the `tss-client/class' for current buffer.")
-
-(defun tss-setup-current-buffer ()
-  "Setup TSS in current buffer"
+(defun etss-setup-current-buffer ()
+  "Setup ETSS in current buffer"
   (interactive)
-  (tss-manager/setup-buffer (current-buffer)))
+  (etss-manager/setup-buffer (current-buffer)))
 
-(defun tss--active? ()
-  "Check whether tss has been set up properly in the current
+(defun etss--active? ()
+  "Check whether etss has been set up properly in the current
 buffer."
-  (tss-manager/aliveness-test (current-buffer)))
+  (etss-manager/aliveness-test (current-buffer)))
 
-(defun tss--active-test ()
-  "Same as `tss--active?' but if the test fails, throw an error
+(defun etss--active-test ()
+  "Same as `etss--active?' but if the test fails, throw an error
 to prevent any other actions."
-  (if (tss--active?)
+  (if (etss--active?)
       t
-    (error "TSS is not properly set up.")))
+    (error "ETSS is not properly set up.")))
 
 ;;; TODO The format of returned result is not well defined, as we need to know
 ;;; more about typescript spec to finalize them. For now the format is basically
 ;;; the one returned by the `typescript-tools'.
 
-(defun tss--get-completions ()
+(defun etss--get-completions ()
   "Get a list of completions at current point in the current
 buffer. nil if none is found.
 
@@ -60,15 +50,15 @@ buffer. nil if none is found.
    (isNewIdentifierLocation . :json-false)
    (isMemberCompletion . t))
 
-See `tss-client/get-completions' for details."
-  (tss--active-test)
-  (let ((client tss--client)
+See `etss-client/get-completions' for details."
+  (etss--active-test)
+  (let ((client etss--client)
         (cbuf (current-buffer)))
-    (tss-client/set-buffer client cbuf)
-    (tss-client/sync-buffer-content client)
-    (tss-client/get-completions client)))
+    (etss-client/set-buffer client cbuf)
+    (etss-client/sync-buffer-content client)
+    (etss-client/get-completions client)))
 
-(defun tss--get-doc-at-point ()
+(defun etss--get-doc-at-point ()
   "Get documentation on thing at point.
 
 Example of returned result:
@@ -81,16 +71,16 @@ Example of returned result:
    (kindModifiers . <declare|...>)
    (kind . <kind>))
 
-See `tss-client/get-doc'"
-  (tss--active-test)
-  (let ((client tss--client)
+See `etss-client/get-doc'"
+  (etss--active-test)
+  (let ((client etss--client)
         (cbuf (current-buffer)))
-    (tss-client/set-buffer client cbuf)
-    (tss-client/sync-buffer-content client)
-    (tss-client/get-doc client)))
+    (etss-client/set-buffer client cbuf)
+    (etss-client/sync-buffer-content client)
+    (etss-client/get-doc client)))
 
-(defun tss--get-errors ()
-  "Get a list of errors on `tss--client'.
+(defun etss--get-errors ()
+  "Get a list of errors on `etss--client'.
 
 NOTE this is not only errors for current buffer.
 
@@ -117,29 +107,29 @@ Example of returned result:
      (character . 5)
      (line . 12))
     (file . <file-path>))]. "
-  (tss--active-test)
-  (let ((client tss--client)
+  (etss--active-test)
+  (let ((client etss--client)
         (cbuf (current-buffer)))
-    (tss-client/set-buffer client cbuf)
-    (tss-client/sync-buffer-content client)
-    (tss-client/get-errors client)))
+    (etss-client/set-buffer client cbuf)
+    (etss-client/sync-buffer-content client)
+    (etss-client/get-errors client)))
 
-(defun tss--request-errors-bg ()
+(defun etss--request-errors-bg ()
   "Request errors info in the background. Unlike
-`tss--get-errors', this function returns immediately. Use
-`tss--requested-errors' to retrieve the result.
+`etss--get-errors', this function returns immediately. Use
+`etss--requested-errors' to retrieve the result.
 
 Getting errors seem to be time consuming, so an async function is
 useful if the client should not block."
-  (tss--active-test)
+  (etss--active-test)
   (error "Not implemented."))
 
-(defun tss--requested-errors ()
+(defun etss--requested-errors ()
   "Return the errors requested beforehand with
-`tss--request-errors-bg'. If error info is ready, return it.
+`etss--request-errors-bg'. If error info is ready, return it.
 Otherwise return nil. To guarantee getting results, the client
 code can do the busy polling."
-  (tss--active-test)
+  (etss--active-test)
   (error "Not implemented."))
 
-(provide 'tss)
+(provide 'etss)

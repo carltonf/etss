@@ -1,98 +1,94 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;: Project Manager:
+;;;: Client Manager:
 ;;;
-;;; Serve as the entry for `tss' for internal code, client manager and the glue
-;;; between `tss-client' and `tss-comm'.
+;;; The entry point for `etss' to internal code.
 ;;; 
 ;;; Responsibilities:
 ;;; - Manage all registered client types
-;;; - Manage all existing clients and their life cycle, see `tss-client' for detail.
+;;; - Manage all existing clients and their life cycle, see `etss-client' for detail.
 ;;; - Identify&Create the right client type of new buffer.
-;;; - Responsible for starting/stopping TSS service.
+;;; - Responsible for starting/stopping ETSS service.
 
-(require 'tss-client)
-(require 'tss-file)
-(require 'tss-tsconfig)
+(require 'etss-client)
+(require 'etss-file)
+(require 'etss-tsconfig)
 
-(require 'tss-comm)
-(require 'tss-tst)
+(require 'etss-comm)
+(require 'etss-tst)
 
-(defvar tss-manager/client-list ()
-  "A global list of all `tss-client'.")
+(require 'etss-utils)
+
+(defvar etss-manager/client-list ()
+  "A global list of all `etss-client'.")
 
 ;;;#NO-TEST
-(defun tss-manager/clean-all-clients ()
+(defun etss-manager/clean-all-clients ()
   "Helper command to remove all clients, delete all
 communications."
   (interactive)
   (let (success-p)
     (unwind-protect
         (progn
-          (loop for client in tss-manager/client-list
-                do (tss-client/destory client))
+          (loop for client in etss-manager/client-list
+                do (etss-client/destory client))
           (setq success-p t))
       (unless success-p
-        (warn "TSS: some client-specific cleaning up has failed."))
-      (setq tss-manager/client-list nil))))
+        (warn "ETSS: some client-specific cleaning up has failed."))
+      (setq etss-manager/client-list nil))))
 
-(defvar tss-manager/registered-client-classes '(tss-tsconfig/class
-                                                tss-file/class)
+(defvar etss-manager/registered-client-classes '(etss-tsconfig/class
+                                                etss-file/class)
   "A list of registered client class. The order of different
 clients are predefined as it affects the type of client will be
 used for a buffer.")
 
 ;;;#NO-TEST
-(defun tss-manager/initialize ()
-  "Initialize `tss-manager'"
-  (warn "tss-manager/initialize: doing nothing yet."))
-
-;;;#NO-TEST
-(defun tss-manager/setup-buffer (file-buf)
-  "Main entry for `tss-manager'. Setup TSS for FILE-BUF."
-  (let ((client (tss-manager/client-loaded? file-buf))
+(defun etss-manager/setup-buffer (file-buf)
+  "Main entry for `etss-manager'. Setup ETSS for FILE-BUF."
+  (let ((client (etss-manager/client-loaded? file-buf))
         service)
     (unless client
-      (let* ((client-class (tss-manager/get-client-class file-buf)))
+      (let* ((client-class (etss-manager/get-client-class file-buf)))
         (setq client (make-instance client-class :buffer file-buf)
               ;; TODO need options to set what service to use
-              service (make-instance tss-tst/class :client client))
-        (tss-client/initialize client)
-        (tss-client/connect client service)
-        (add-to-list 'tss-manager/client-list client)))
-    (tss-client/configure-buffer client file-buf)))
+              service (make-instance etss-tst/class :client client))
+        (etss-client/initialize client)
+        (etss-client/connect client service)
+        (add-to-list 'etss-manager/client-list client)))
+    (etss-client/configure-buffer client file-buf)))
 
-(defun tss-manager/client-loaded? (file-buf)
+(defun etss-manager/client-loaded? (file-buf)
   "Check whether there is an alive client for FILE-BUF. Return
 the client if found, o/w nil."
-  (loop for client in tss-manager/client-list
-        when (tss-client/contains? client file-buf)
+  (loop for client in etss-manager/client-list
+        when (etss-client/contains? client file-buf)
         return client))
 
-(defun tss-manager/get-client-class (file-buf)
+(defun etss-manager/get-client-class (file-buf)
   "Get the client class that is applicable to FILE-BUF.
-See `tss-manager/registered-client-classes' for all possible
+See `etss-manager/registered-client-classes' for all possible
 classes. Return nil if no class can be used."
-  (loop for class in tss-manager/registered-client-classes
-        when (tss-client/applicable? class file-buf)
+  (loop for class in etss-manager/registered-client-classes
+        when (etss-client/applicable? class file-buf)
         return class))
 
 ;;; TODO better report on which part fails the test
 ;;;#NO-TEST
-(defun tss-manager/aliveness-test (buffer)
-  "Check whether TSS can function normal in BUFFER.
+(defun etss-manager/aliveness-test (buffer)
+  "Check whether ETSS can function normally in BUFFER.
 
-Aliveness test should be done before using TSS API, this test is
+Aliveness test should be done before using ETSS API, this test is
 conducted following a chain:
 1. global status test at manager level
-2. local status, `tss--client' should be set in BUFFER
-3. Then `tss--client' -> `tss-comm'."
+2. local status, `etss--client' should be set in BUFFER
+3. Then `etss--client' -> `etss-comm'."
   ;; global status checking
   (and (and
-        tss-manager/client-list
-        (tss-client/class-list-p tss-manager/client-list))
+        etss-manager/client-list
+        (etss-client/class-list-p etss-manager/client-list))
        ;; local status checking
        (with-current-buffer buffer
-         (and tss--client
-              (tss-client/active? tss--client)))))
+         (and etss--client
+              (etss-client/active? etss--client)))))
 
-(provide 'tss-manager)
+(provide 'etss-manager)

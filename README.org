@@ -1,5 +1,5 @@
-Emacs TypeScript Servcie library: a midde-level library between TypeScript
-Services and Emacs.
+Emacs TypeScript language Servcie library: a midde-level library between
+TypeScript Services and Emacs.
 
 This project grows out of [[https://github.com/carltonf/emacs-tss][my fork]] of [[https://github.com/aki2o/emacs-tss][aki2o/emacs-tss]], completely rewritten with
 a focus on re-usability. Many Emacs utilities are factored out as independent

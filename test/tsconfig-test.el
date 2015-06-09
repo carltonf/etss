@@ -1,27 +1,27 @@
-;;; Tests for `tss-tsconfig', prefix `tss-tsconfig--' is omitted.
+;;; Tests for `etss-tsconfig', prefix `etss-tsconfig--' is omitted.
 
-(require 'tss-tsconfig)
+(require 'etss-tsconfig)
 (require 'f)
 (require 'dash)
 (require 's)
 
 (ert-deftest locate-tsconfig ()
   (let* ((fpath (with-tsconfig-prj-root "ts/animals.ts"))
-         (found-root (tss-tsconfig/locate-project-root fpath)))
+         (found-root (etss-tsconfig/locate-project-root fpath)))
     (should (stringp found-root))
     (should (and (f-exists? found-root) (f-dir? found-root)))
     (should (-any? (lambda (fn)
-                     (equal (f-filename fn) tss-tsconfig/tsconfig-filename))
+                     (equal (f-filename fn) etss-tsconfig/tsconfig-filename))
                    (f-files found-root)))))
 
 (ert-deftest applicable? ()
   (let* ((file-buf (find-file-noselect (with-tsconfig-prj-root "ts/animals.ts"))))
-    (should (tss-client/applicable? tss-tsconfig/class file-buf))))
+    (should (etss-client/applicable? etss-tsconfig/class file-buf))))
 
 (ert-deftest initialize ()
   (let* ((file-buf (find-file-noselect (with-tsconfig-prj-root "ts/animals.ts")))
-         (prjobj (make-instance tss-tsconfig/class :buffer file-buf)))
-    (tss-client/initialize prjobj)
+         (prjobj (make-instance etss-tsconfig/class :buffer file-buf)))
+    (etss-client/initialize prjobj)
     (with-slots (name buffer buflist root initp) prjobj
       (should (s-equals? name "tsconfig-prj"))
       (should (eq buffer file-buf))
@@ -34,7 +34,7 @@
 (ert-deftest path-within-root? ()
   (with-temp-buffer
     (let ((root "/tmp/"))
-      (should (tss-tsconfig/path-within-root? root
+      (should (etss-tsconfig/path-within-root? root
                                              "/tmp/some/my.ts"))
-      (should-not (tss-tsconfig/path-within-root? root
+      (should-not (etss-tsconfig/path-within-root? root
                                                  "/home/my/test.ts")))))

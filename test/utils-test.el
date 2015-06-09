@@ -1,14 +1,14 @@
-(require 'tss-utils)
+(require 'etss-utils)
 
 (ert-deftest assoc-path ()
   (let ((alist '((foo . ((bar . "llama")
                          (baz . "monkey"))))))
     (should (equal (cdr (assoc 'foo alist))
-                   (tss-utils/assoc-path alist '(foo))))
+                   (etss-utils/assoc-path alist '(foo))))
     (should (equal (cdr (assoc 'foo alist))
-                   (tss-utils/assoc-path alist 'foo)))
+                   (etss-utils/assoc-path alist 'foo)))
     (should (equal "llama"
-                   (tss-utils/assoc-path alist '(foo bar))))
+                   (etss-utils/assoc-path alist '(foo bar))))
     (should (equal "monkey"
-                   (tss-utils/assoc-path alist '(foo baz))))
-    (should-not (tss-utils/assoc-path alist '(foo nonexistent)))))
+                   (etss-utils/assoc-path alist '(foo baz))))
+    (should-not (etss-utils/assoc-path alist '(foo nonexistent)))))
