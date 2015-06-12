@@ -1,0 +1,6 @@
+(:name etss
+       :website "https://github.com/emacs-ts-ide/etss"
+       :description "Emacs TypeScript language Service"
+       :type github
+       :pkgname "emacs-ts-ide/etss"
+       :depends (f s dash))
