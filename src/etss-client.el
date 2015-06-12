@@ -146,7 +146,6 @@ Needed as various commands can only be done with regards to the
     (when (etss-client/contains? this buf)
       (oset this :buffer buf))))
 
-;;; TODO not a good name for projects source syncing, rename to `sync-source'
 ;;; TODO non-optimized and not well-scaled.
 ;;; 1. Projects have multiple buffers not a single buffer
 ;;; 2. Use timestamps to only sync updated buffers.

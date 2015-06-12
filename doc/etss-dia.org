@@ -1,0 +1,88 @@
+Simple UML Diagrams for =ETSS=.
+
+* Software Arch
+
+#+BEGIN_SRC plantuml :file etss-arch.png
+  class "etss-manager" as Manager {
+      list of etss-client: client-list
+  }
+
+  Manager "1" o-- "many" Client
+
+  abstract "etss-client" as Client {
+      string name
+      buffer buffer
+  }
+  class "etss-file" as File
+  class "etss-tsconfig" as TSConfig
+
+  Client <|-- File
+  Client <|-- TSConfig
+
+  Client *-- "1" COMM
+
+  abstract "etss-comm" as COMM {
+      etss-client client
+  }
+  class "etss-tst" as TST
+  class "etss-tsserver" as TSServer
+  COMM <|-- TST
+  COMM <|-- TSServer
+#+END_SRC
+
+#+RESULTS:
+[[file:etss-arch.png]]
+
+* The flow of the most typical call: =get-completions=
+
+#+BEGIN_SRC plantuml :file etss-seq-get-completions.png
+  skinparam handwritten true
+  participant "etss-manager" as manager
+  participant etss
+  participant "etss-client" as client
+  participant "etss-comm" as comm
+
+  note over manager: manage clients\' life cycle
+
+  group Check etss status
+      note over etss, manager: hierarchical tests
+      etss -> manager: aliveness-test
+      loop over "etss-manager/client-list"
+          manager -> client : active?
+          client -> client: internal status check
+          client -> comm: alive?
+          comm -> comm: internal status check
+          comm --> manager: return status
+      end
+      manager --> etss: return test result nil/t
+  end
+
+  group Set operating buffer
+      etss -> client   : set-buffer
+      client -> client : 
+  end
+
+  group Sync source
+      note over etss, client: not limited to current buffer
+      etss -> client : sync-source
+      note over client: sync status is NOT yet implemented.
+      client -> client: source sync staus check
+      alt source out of sync
+          client -> comm : update-source
+          comm --> client: no errors
+          client --> etss: t
+      else source is already in sync
+          client --> etss: nil
+      end
+  end
+
+  group Issue ":completions" command
+      etss -> client: get-completions
+      client -> comm: get-completions
+      comm --> etss : completion candidates.
+  end
+#+END_SRC
+
+#+RESULTS:
+[[file:etss-seq-get-completions.png]]
+

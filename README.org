@@ -33,6 +33,19 @@ So far only [[https://github.com/clausreinke/typescript-tools][clausreinke/types
 =tsserver= is planned.
 
 
+* Documentation
+In-file source comments are quite extensive. However, some high-level
+architecture diagrams and API manual are also provided (or under writing.)
+
+** Arch and Sequence Diagram
+
+See [[file:doc/etss-dia.org]]
+
+Diagrams are written with [[http://plantuml.sourceforge.net/][PlantUML]] in Emacs ([[https://github.com/zwz/plantuml-mode][zwz/plantuml-mode]] and [[http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html][Org-babel
+plantuml support]])
+
+** TODO API manual
+
 * Test
 Tests are written with built-in =ert= library, [[https://github.com/rejeep/ert-runner.el][rejeep/ert-runner.el]] is used to
 ease test running.
