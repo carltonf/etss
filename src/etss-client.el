@@ -208,4 +208,28 @@ be NO detailed info."
   "Retrieve errors about THIS client."
   (etss-comm/get-errors (oref this comm)))
 
+
+;;;#NO-TEST
+(defmethod etss-client/get-definition ((this etss-client/class)
+                                       &optional line column)
+  "Get definition description for thing at (LINE COLUMN) or current point.
+
+Return nil if not found or "
+  (with-current-buffer (oref this :buffer)
+    (save-restriction
+      (widen)
+      (let* ((line (or line (line-number-at-pos)))
+             (column (or column (current-column)))
+             (ret (etss-comm/get-definition (oref this comm)
+                                            line column (buffer-file-name)))
+             (deffile (etss-utils/assoc-path ret 'file))
+             (line (etss-utils/assoc-path ret '(min line)))
+             (col (etss-utils/assoc-path ret '(min character))))
+        ;; sanity check
+        (if (or (not deffile)
+                (not (file-exists-p deffile))
+                (null line)
+                (null col))
+            nil
+          ret)))))
 (provide 'etss-client)

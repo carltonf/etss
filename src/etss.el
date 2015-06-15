@@ -11,6 +11,10 @@
 ;;; Naming Convention:
 ;;; 1. "etss-" prefix for interactive command or customization options.
 ;;; 2. "etss--" prefix for ELisp programming API and variables.
+;;;
+;;;
+;;; TODO a better API result format, some methods to operate on them.
+
 (eval-when-compile
   (require 'cl))
 
@@ -134,5 +138,31 @@ Otherwise return nil. To guarantee getting results, the client
 code can do the busy polling."
   (etss--active-test)
   (error "Not implemented."))
+
+(defun etss--get-definition ()
+  "Get the definition description:
+
+An example of return result is:
+    ((lim
+      (character . 45)
+      (line . 6))
+     (min
+      (character . 5)
+      (line . 6))
+     (file . <file-path>)
+     (def
+      (containerName . <containerName>)
+      (name . <name>)
+      (kind . <kind>)
+      (textSpan
+       (length . 40)
+       (start . 71))
+      (fileName . <filename>)))."
+  (etss--active-test)
+  (let ((client etss--client)
+        (cbuf (current-buffer)))
+    (etss-client/set-buffer client cbuf)
+    (etss-client/sync-buffer-content client)
+    (etss-client/get-definition client)))
 
 (provide 'etss)

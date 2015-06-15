@@ -93,4 +93,7 @@ See `etss-client/get-doc' for more details.")
 (defgeneric etss-comm/get-errors ((this etss-comm/class))
   "Retrieve errors.")
 
+(defgeneric etss-comm/get-definition ((this etss-comm/class))
+  "Retrieve definition description.")
+
 (provide 'etss-comm)

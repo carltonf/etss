@@ -327,7 +327,16 @@ and etc."
 
 (defmethod etss-comm/get-errors ((this etss-tst/class))
   (let ((cmdstr "showErrors"))
+    ;; TODO need to adjust the column value
     (etss-tst/send-accept this cmdstr)))
+
+(defmethod etss-comm/get-definition ((this etss-tst/class)
+                                     line column fpath)
+  (let* ((cmdstr (format "definition %d %d %s"
+                         line (1+ column) fpath))
+         (ret (etss-tst/send-accept this cmdstr)))
+    ;;TODO adjust column value as Emacs counts column from zero
+    ret))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;: Static functions
