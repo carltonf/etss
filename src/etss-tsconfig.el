@@ -57,9 +57,15 @@ searches upwards to find the nearest ancestor containing
     (with-slots (root) this
       (etss-tsconfig/path-within-root? root fpath))))
 
-(defun etss-tsconfig/path-within-root? (root fpath)
+(defsubst etss-tsconfig/path-within-root? (root fpath)
   "Pure function to test whether FPATH is under ROOT."
-  (s-prefix? root fpath))
+  (s-prefix? (expand-file-name root) (expand-file-name fpath)))
+
+(defmethod etss-client/active? ((this etss-tsconfig/class))
+  (with-slots (initp comm) this
+    (and initp
+         (and (etss-comm/class-child-p comm)
+              (etss-comm/alive? comm)))))
 
 (defmethod etss-client/destory ((this etss-tsconfig/class))
   (with-slots (comm buflist initp) this

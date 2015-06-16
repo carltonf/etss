@@ -15,6 +15,7 @@
 (require 'eieio)
 
 (require 'etss-comm)
+(require 'etss-utils)
 
 (defvar etss--client)
 

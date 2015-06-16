@@ -35,6 +35,17 @@
   (with-temp-buffer
     (let ((root "/tmp/"))
       (should (etss-tsconfig/path-within-root? root
-                                             "/tmp/some/my.ts"))
+                                               "/tmp/some/my.ts"))
       (should-not (etss-tsconfig/path-within-root? root
-                                                 "/home/my/test.ts")))))
+                                                   "/home/my/test.ts")))
+    ;; make sure path comparison is using canonical path
+    (let ((root "~/mywork/dir")
+          (new-home "/home/user")
+          (old-home (getenv "HOME")))
+      (setenv "HOME" new-home)
+      (should (etss-tsconfig/path-within-root? root
+                                               "/home/user/mywork/dir/test.ts"))
+      (should-not (etss-tsconfig/path-within-root? root
+                                                   "/home/user/mywork/else/test.ts"))
+      ;; restore to old home value
+      (setenv "HOME" old-home))))
